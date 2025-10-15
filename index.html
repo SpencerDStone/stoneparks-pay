@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<p class="text-xs text-neutral-500">Payments are processed by a certified provider. Card data never touches our servers.</p>
+</form>
+
+
+<div id="policy" class="mt-6 grid md:grid-cols-2 gap-6">
+<div id="refunds" class="glass rounded-2xl p-5 text-sm text-neutral-700">
+<h4 class="font-semibold">Refund Policy</h4>
+<p class="mt-1">Refunds are reviewed within 7 business days if a permit is denied or duplicated in error. Contact the school office.</p>
+</div>
+<div id="privacy" class="glass rounded-2xl p-5 text-sm text-neutral-700">
+<h4 class="font-semibold">Privacy Notice</h4>
+<p class="mt-1">We collect only information necessary to issue the permit and receipt. See district policy for full details.</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+
+
+<footer class="max-w-6xl mx-auto px-6 pb-10 text-sm text-neutral-600">
+<div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+<p>© <span id="year"></span> StoneParks</p>
+<div class="flex items-center gap-3 opacity-80">
+<span>Powered by</span>
+<img class="h-5" alt="Stripe" src="https://upload.wikimedia.org/wikipedia/commons/8/8e/Stripe_Logo%2C_revised_2016.svg"/>
+<span class="text-xs">(or your preferred provider)</span>
+</div>
+</div>
+</footer>
+
+
+<script>
+const amountMap = { standard: 50, senior: 75, replacement: 10 };
+// Optional: per-school labels
+const schoolLabels = { central: 'Central High', ridge: 'Ridge Academy', northview: 'Northview' };
+const permitSelect = document.getElementById('permitType');
+const amountEl = document.getElementById('amount');
+const yearEl = document.getElementById('year');
+yearEl.textContent = new Date().getFullYear();
+
+
+function updateAmount() {
+const v = permitSelect.value;
+const amt = amountMap[v] || 0;
+amountEl.textContent = `$${amt.toFixed(2)}`;
+}
+permitSelect.addEventListener('change', updateAmount);
+updateAmount();
+
+
+async function createCheckoutSession(payload) {
+const res = await fetch('/api/create-checkout-session', {
+method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+});
+if (!res.ok) throw new Error('Failed to start checkout');
+return await res.json();
+}
+
+
+document.getElementById('payForm').addEventListener('submit', async (e) => {
+e.preventDefault();
+const data = Object.fromEntries(new FormData(e.currentTarget).entries());
+if (!data.permitType || !data.school) { alert('Please choose a school and permit type.'); return; }
+const amount = amountMap[data.permitType] || 0;
+const payload = { ...data, amount_cents: amount * 100, currency: 'usd', description: `Parking Permit — ${data.permitType} — ${schoolLabels[data.school] || data.school}` };
+try {
+document.getElementById('payBtn').disabled = true;
+const { url } = await createCheckoutSession(payload);
+window.location.href = url;
+} catch (err) {
+console.error(err);
+alert('Sorry, we could not start checkout. Please try again.');
+} finally {
+document.getElementById('payBtn').disabled = false;
+}
+});
+</script>
+</body>
+</html>
