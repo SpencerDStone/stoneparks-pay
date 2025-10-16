@@ -14,6 +14,18 @@
 <meta property="og:description" content="Fast, PCI‑compliant checkout for school parking permits." />
 <meta property="og:type" content="website" />
 <meta property="og:image" content="/og-image.png" />
+
+<meta http-equiv="Content-Security-Policy" content="
+  default-src 'self' https: data: blob:;
+  connect-src 'self' https:;
+  frame-src https:;
+  script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://js.stripe.com https://static.cloudflareinsights.com;
+  style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+  font-src 'self' https://fonts.gstatic.com;
+  img-src 'self' https: data: blob:;
+">
+
+  
 <style>
 html { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji"; }
 .glass { background: rgba(255,255,255,0.75); backdrop-filter: blur(8px); }
@@ -83,3 +95,4 @@ Verified Secure
 <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
 <p>© <span id="year"></span> StoneParks</p>
 </html>
+
