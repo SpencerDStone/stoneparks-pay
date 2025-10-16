@@ -3,18 +3,19 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+
   <title>StoneParks — Secure Payment</title>
   <meta name="description" content="Pay for your school parking permit securely." />
 
-  <!-- Google Fonts (optional) -->
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <!-- Self-hosted Tailwind build -->
+  <!-- Your compiled Tailwind build -->
   <link rel="stylesheet" href="/dist/style.css">
 
-  <!-- Icons / Manifest -->
+  <!-- Icons / PWA bits (optional, keep if you have these files) -->
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
   <link rel="manifest" href="/assets/manifest.json">
@@ -24,38 +25,30 @@
   <meta property="og:type" content="website" />
   <meta property="og:image" content="/og-image.png" />
 
-  <!-- Security: keep CSP strict and Stripe-compatible -->
+  <!-- CSP: strict, no inline JS, allow Google Fonts and CF beacon -->
   <meta http-equiv="Content-Security-Policy" content="
-  default-src 'self';
-  script-src 'self' https://js.stripe.com;
-  style-src 'self' https://fonts.googleapis.com 'unsafe-inline';
-  font-src 'self' https://fonts.gstatic.com;
-  img-src 'self' data:;
-  frame-src https://js.stripe.com https://checkout.stripe.com;
-  connect-src 'self' https://api.stripe.com;
-  object-src 'none';
-  base-uri 'self';
-  form-action 'self' https://js.stripe.com https://checkout.stripe.com;
-  upgrade-insecure-requests;
-">
+    default-src 'self';
+    style-src   'self' 'unsafe-inline' https://fonts.googleapis.com;
+    font-src    'self' https://fonts.gstatic.com;
+    img-src     'self' data: https:;
+    script-src  'self' https://static.cloudflareinsights.com;
+    connect-src 'self';
+    frame-src   'none';
+  ">
 
-  <!-- Page-specific styles that require 'unsafe-inline' in style-src -->
   <style>
-    html { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji"; }
+    html { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji'; }
     .glass { background: rgba(255,255,255,0.75); backdrop-filter: blur(8px); }
-    .shimmer { background: linear-gradient(110deg, rgba(255,255,255,0.0) 0%, rgba(255,255,255,0.7) 50%, rgba(255,255,255,0.0) 100%); background-size: 200% 100%; animation: shimmer 2.2s infinite; }
-    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
     .secure-badge svg { filter: drop-shadow(0 1px 1px rgba(0,0,0,.15)); }
-    .gradient { background:
-      radial-gradient(1200px 600px at 10% 10%, #c7d2fe55, transparent 60%),
-      radial-gradient(900px 500px at 90% 20%, #a7f3d055, transparent 60%),
-      radial-gradient(800px 500px at 50% 100%, #fde68a55, transparent 60%);
+    .gradient {
+      background:
+        radial-gradient(1200px 600px at 10% 10%, #c7d2fe55, transparent 60%),
+        radial-gradient(900px 500px at 90% 20%, #a7f3d055, transparent 60%),
+        radial-gradient(800px 500px at 50% 100%, #fde68a55, transparent 60%);
     }
   </style>
-
-  <!-- Stripe (allowed by CSP; optional here if you embed elements later) -->
-  <script src="https://js.stripe.com/v3/" async></script>
 </head>
+
 <body class="min-h-screen gradient">
   <header class="max-w-6xl mx-auto px-6 pt-8 flex items-center justify-between">
     <div class="flex items-center gap-3">
@@ -65,10 +58,12 @@
         <p class="text-xs text-neutral-600">Secure Payment Portal</p>
       </div>
     </div>
+
     <div class="hidden sm:flex items-center gap-3 text-xs text-neutral-600">
       <span class="inline-flex items-center gap-1">
-        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a9 9 0 00-9 9v3.586l-1.707 1.707A1 1 0 002 18h20a1 1 0 00.707-1.707L21 14.586V11a9 9 0 00-9-9zm-1 19.95V22h2v-.05A23.94 23.94 0 0112 21.95z"/></svg>
-        256-bit TLS
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 2a9 9 0 00-9 9v3.586l-1.707 1.707A1 1 0 002 18h20a1 1 0 00.707-1.707L21 14.586V11a9 9 0 00-9-9zm-1 19.95V22h2v-.05A23.94 23.94 0 0112 21.95z"/>
+        </svg> 256-bit TLS
       </span>
       <span class="inline-flex items-center gap-1">
         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1l9 4v6c0 5-3.8 9.7-9 11-5.2-1.3-9-6-9-11V5l9-4zm0 4.2L6 7v3.8c0 3.9 2.7 7.6 6 8.7 3.3-1.1 6-4.8 6-8.7V7l-6-1.8z"/></svg>
@@ -88,8 +83,10 @@
         <div class="glass rounded-3xl p-6 shadow-xl">
           <h2 class="text-2xl font-bold">Pay for Your Parking Permit</h2>
           <p class="text-neutral-700 mt-2">
-            Use our secure, PCI-compliant checkout at stoneparks.org. We never store your card details on our servers. Apple Pay & Google Pay supported.
+            Use our secure, PCI-compliant checkout at stoneparks.org. We never store your card
+            details on our servers. Apple Pay &amp; Google Pay supported.
           </p>
+
           <ul class="mt-4 space-y-2 text-sm text-neutral-700">
             <li class="flex gap-2"><span>•</span><span>Receipts emailed instantly</span></li>
             <li class="flex gap-2"><span>•</span><span>Refunds handled by office staff if needed</span></li>
@@ -102,35 +99,51 @@
               Verified Secure
             </div>
 
-            <!-- Inline, self-hosted brand marks (no external fetch) -->
+            <!-- Inline, self-hosted brand marks (SVG, no external fetch) -->
             <div class="flex items-center gap-2">
               <!-- VISA -->
-              <svg aria-label="Visa" class="h-6 w-auto" viewBox="0 0 64 20"><rect width="64" height="20" rx="3" fill="#142787"/><text x="8" y="14" font-size="11" font-family="Arial, Helvetica, sans-serif" fill="#fff" font-weight="700">VISA</text></svg>
+              <svg aria-label="Visa" class="h-6 w-auto" viewBox="0 0 64 20">
+                <rect width="64" height="20" rx="3" fill="#142787"/>
+                <text x="8" y="14" font-size="11" font-family="Arial, Helvetica, sans-serif" fill="#fff" font-weight="700">VISA</text>
+              </svg>
               <!-- Mastercard -->
-              <svg aria-label="Mastercard" class="h-6 w-auto" viewBox="0 0 64 20"><rect width="64" height="20" rx="3" fill="#181818"/><circle cx="28" cy="10" r="6" fill="#EB001B"/><circle cx="36" cy="10" r="6" fill="#F79E1B" fill-opacity="0.85"/><text x="42" y="14" font-size="8" font-family="Arial, Helvetica, sans-serif" fill="#fff">MC</text></svg>
+              <svg aria-label="Mastercard" class="h-6 w-auto" viewBox="0 0 64 20">
+                <rect width="64" height="20" rx="3" fill="#181818"/>
+                <circle cx="28" cy="10" r="6" fill="#EB001B"/><circle cx="36" cy="10" r="6" fill="#F79E1B" fill-opacity="0.85"/>
+                <text x="42" y="14" font-size="8" font-family="Arial, Helvetica, sans-serif" fill="#fff">MC</text>
+              </svg>
               <!-- Amex -->
-              <svg aria-label="American Express" class="h-6 w-auto" viewBox="0 0 64 20"><rect width="64" height="20" rx="3" fill="#2E77BB"/><text x="6" y="14" font-size="9" font-family="Arial, Helvetica, sans-serif" fill="#fff" font-weight="700">AMEX</text></svg>
+              <svg aria-label="American Express" class="h-6 w-auto" viewBox="0 0 64 20">
+                <rect width="64" height="20" rx="3" fill="#2E77BB"/>
+                <text x="6" y="14" font-size="9" font-family="Arial, Helvetica, sans-serif" fill="#fff" font-weight="700">AMEX</text>
+              </svg>
               <!-- Apple Pay -->
-              <svg aria-label="Apple Pay" class="h-6 w-auto" viewBox="0 0 64 20"><rect width="64" height="20" rx="3" fill="#000"/><text x="8" y="14" font-size="9" font-family="Arial, Helvetica, sans-serif" fill="#fff"> Pay</text></svg>
+              <svg aria-label="Apple Pay" class="h-6 w-auto" viewBox="0 0 64 20">
+                <rect width="64" height="20" rx="3" fill="#000"/>
+                <text x="8" y="14" font-size="9" font-family="Arial, Helvetica, sans-serif" fill="#fff"> Pay</text>
+              </svg>
               <!-- Google Pay -->
-              <svg aria-label="Google Pay" class="h-6 w-auto" viewBox="0 0 64 20"><rect width="64" height="20" rx="3" fill="#fff" stroke="#e5e7eb"/><text x="8" y="14" font-size="9" font-family="Arial, Helvetica, sans-serif" fill="#111">G Pay</text></svg>
+              <svg aria-label="Google Pay" class="h-6 w-auto" viewBox="0 0 64 20">
+                <rect width="64" height="20" rx="3" fill="#fff" stroke="#e5e7eb"/>
+                <text x="8" y="14" font-size="9" font-family="Arial, Helvetica, sans-serif" fill="#111">G Pay</text>
+              </svg>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Right column placeholder (add your form/Stripe Elements here later) -->
+      <!-- Right column placeholder (kept empty for now) -->
       <div class="glass rounded-3xl p-6 shadow-xl lg:col-span-3">
-        <!-- Content goes here -->
+        <!-- Form/checkout will come back here later -->
+        <p class="text-neutral-600">Checkout will be enabled soon. For now this page is read-only.</p>
       </div>
     </section>
   </main>
 
   <footer class="max-w-6xl mx-auto px-6 pb-10 text-sm text-neutral-600">
     <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
-      <p>© <span id="year"></span> StoneParks</p>
+      <p>© 2025 StoneParks</p>
     </div>
   </footer>
 </body>
 </html>
-
