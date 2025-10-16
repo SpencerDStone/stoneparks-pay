@@ -26,14 +26,18 @@
 
   <!-- Security: keep CSP strict and Stripe-compatible -->
   <meta http-equiv="Content-Security-Policy" content="
-    default-src 'self';
-    script-src 'self' https://js.stripe.com;
-    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-    font-src  'self' https://fonts.gstatic.com;
-    img-src   'self' data:;
-    frame-src https://js.stripe.com https://checkout.stripe.com;
-    connect-src 'self' https://api.stripe.com;
-  ">
+  default-src 'self';
+  script-src 'self' https://js.stripe.com;
+  style-src 'self' https://fonts.googleapis.com 'unsafe-inline';
+  font-src 'self' https://fonts.gstatic.com;
+  img-src 'self' data:;
+  frame-src https://js.stripe.com https://checkout.stripe.com;
+  connect-src 'self' https://api.stripe.com;
+  object-src 'none';
+  base-uri 'self';
+  form-action 'self' https://js.stripe.com https://checkout.stripe.com;
+  upgrade-insecure-requests;
+">
 
   <!-- Page-specific styles that require 'unsafe-inline' in style-src -->
   <style>
@@ -129,3 +133,4 @@
   </footer>
 </body>
 </html>
+
