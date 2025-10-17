@@ -11,31 +11,44 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <!-- Built CSS (no CDN) -->
+  <!-- Local Tailwind build -->
   <link rel="stylesheet" href="/dist/style.css">
 
-  <!-- Icons / PWA extras (optional) -->
+  <!-- Favicons -->
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
   <link rel="manifest" href="/assets/manifest.json">
 
-  <!-- NOTE: do NOT include Cloudflare RUM or any inline <script> here -->
+  <!-- Tight but working CSP -->
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self' https: data: blob:;
+    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+    font-src 'self' https://fonts.gstatic.com data:;
+    script-src 'self';
+    connect-src 'self';
+    img-src 'self' data: https:;
+    frame-src https:;
+    object-src 'none';
+    base-uri 'self';
+  ">
 </head>
-<body class="min-h-screen gradient text-neutral-900">
-  <header class="max-w-6xl mx-auto px-6 pt-8 flex items-center justify-between">
-    <div class="flex items-center gap-3">
-      <div class="w-10 h-10 rounded-2xl bg-black/90 text-white grid place-items-center font-bold">SP</div>
-      <div class="leading-tight">
-        <h1 class="text-xl font-bold tracking-tight">StoneParks</h1>
-        <p class="text-xs text-neutral-600">Secure Payment Portal</p>
-      </div>
+
+<body class="min-h-screen gradient">
+<header class="max-w-6xl mx-auto px-6 pt-8 flex items-center justify-between">
+  <div class="flex items-center gap-3">
+    <div class="w-10 h-10 rounded-2xl bg-black/90 text-white grid place-items-center font-bold">SP</div>
+    <div class="leading-tight">
+      <h1 class="text-xl font-bold tracking-tight">StoneParks</h1>
+      <p class="text-xs text-neutral-600">Secure Payment Portal</p>
     </div>
-    <div class="hidden sm:flex items-center gap-3 text-xs text-neutral-600">
-      <span class="inline-flex items-center gap-1">256-bit TLS</span>
-      <span class="inline-flex items-center gap-1">PCI DSS</span>
-      <span class="inline-flex items-center gap-1">Privacy First</span>
-    </div>
-  </header>
+  </div>
+  <div class="hidden sm:flex items-center gap-3 text-xs text-neutral-600">
+    <span>256-bit TLS</span>
+    <span>PCI DSS</span>
+    <span>Privacy First</span>
+  </div>
+</header>
+
 
   <main class="max-w-6xl mx-auto px-6 pb-20">
     <section class="mt-8 grid lg:grid-cols-5 gap-8">
@@ -93,3 +106,4 @@
   <script src="/assets/main.js" defer></script>
 </body>
 </html>
+
